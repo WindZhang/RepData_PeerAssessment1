@@ -9,7 +9,9 @@ output: html_document
 setwd to locate the activity.csv, using the read.csv with header to load the data.
 
 ```{r echo = TRUE}
+Sys.setlocale("LC_TIME", "C")
 library(dplyr)
+library(ggplot2)
 setwd("F:/Rprog/repdata-data-activity")
 activity <- read.csv("activity.csv", header = TRUE)
 
@@ -63,7 +65,8 @@ names(byinterval)[2] <- "avgsteps"
 with(byinterval, plot(interval, avgsteps, 
                       type = "l",
                       ylab = "Average Steps Across All Days",
-                      xlab = "5 Minutes Interval")
+                      xlab = "5 Minutes Interval",
+                      col  = "blue")
      )
 ```
 
@@ -89,13 +92,13 @@ sum(all_na)
 ```{r echo = TRUE}
 new_act <- activity
 obs <- length(all_na)
-i <- 1
-while (i < obs){
+
+for (i in 1:obs){
        if(is.na(new_act$steps[i])){
                 interval <- new_act[i,3]
                 new_act[i,1] <- byinterval[which(byinterval$interval == interval),2]    
        }
-        i <- i + 1
+       
 }
 
 
@@ -126,8 +129,32 @@ new_median
 ###The findings after the NA filling###
 
 **Compare the mean/median value with the original dataset, we may find the values are different.**
-**The new dataset with NA filling, the mean is almost indentical to median**
+**The new dataset with NA filling, the mean is close to median**
 
 ###Are there differences in activity patterns between weekdays and weekends?###
 
+```{r echo = TRUE}
+
+weekend <- c("Saterday", "Sunday")
+wkdays_act <- mutate(new_act, wkdays = weekdays(as.Date(date)))
+
+for (i in 1:obs){
+        if(wkdays_act$wkdays[i] %in% weekend){
+            wkdays_act$wkdays[i] <- "weekend"
+                
+        }else{
+            wkdays_act$wkdays[i] <- "weekday"
+        }
+}
+
+byinterval <- summarize(group_by(wkdays_act, interval, wkdays), 
+                        mean(steps, na.rm = TRUE))
+names(byinterval)[3] <- "means"
+results <- qplot(x = interval, y = means, 
+                 data = byinterval,
+                 geom = "line",
+                 facets = wkdays~. )
+results
+
+```
 
