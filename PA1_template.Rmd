@@ -1,6 +1,5 @@
 ---
 title: "R course Peer Assessment 1"
-author: "wind zhang"
 date: "Wednesday, April 15, 2015"
 output: html_document
 ---
@@ -10,7 +9,7 @@ output: html_document
 setwd to locate the activity.csv, using the read.csv with header to load the data.
 
 ```{r echo = TRUE}
-
+library(dplyr)
 setwd("F:/Rprog/repdata-data-activity")
 activity <- read.csv("activity.csv", header = TRUE)
 
@@ -21,24 +20,40 @@ activity <- read.csv("activity.csv", header = TRUE)
 using the sumarize of dplyr to sum the total steps grouped by date
 
 ```{r echo = TRUE}
-
-library(dplyr)
-
-### Calculate the total number of steps taken per day
-bydate <- summarize(group_by(activity,date), sum(steps, na.rm = TRUE))
-names(bydate)[2] <- "total.steps"
-
 ### plot the histogram
-hist(bydate$total.steps,
+Hist <- function(dataset){      
+hist(dataset$total.steps,
      xlab = "Steps Per Day",
      main = "Histogram of 'Steps Per Day'"
      )
+
+}
+
+### Calculate the total number of steps taken per day
+Bydate <- function(dataset){
+        summarize(group_by(dataset, date), sum(steps, na.rm = TRUE))
+        }
+
+bydate <- Bydate(activity)
+names(bydate)[2] <- "total.steps"
+Hist(bydate)
 ### Calculate and report the mean and median of the total number of steps taken per day
-
-mean(bydate$total.steps)
-median(bydate$total.steps)
-
+orig_mean <- mean(bydate$total.steps)
+orig_median <- median(bydate$total.steps)
 ```
+**The orignal mean value with NAs**
+
+```{r echo = TRUE}
+orig_mean
+```
+
+**The orignal median value with NAs**
+
+```{r echo = TRUE}
+orig_median
+```
+
+
 ### What is the average daily activity pattern? ###
 
 ```{r echo = TRUE}
@@ -63,8 +78,56 @@ byinterval[which(byinterval$avgsteps == max(byinterval$avgsteps)),]
 **Count how many NAs in the original dataset**
 
 ```{r echo = TRUE}
-sum(is.na(activity$steps == TRUE))
+
+all_na <- is.na(activity$steps)
+sum(all_na)
 
 ```
+
+**Using mean for that 5-minute interval to fill the NA**
+
+```{r echo = TRUE}
+new_act <- activity
+obs <- length(all_na)
+i <- 1
+while (i < obs){
+       if(is.na(new_act$steps[i])){
+                interval <- new_act[i,3]
+                new_act[i,1] <- byinterval[which(byinterval$interval == interval),2]    
+       }
+        i <- i + 1
+}
+
+
+```
+
+**calculate the new_act dataset with NAs filled by mean of 5-minute interval**
+
+```{r echo = TRUE}
+bydate <- Bydate(new_act)
+names(bydate)[2] <- "total.steps"
+Hist(bydate)
+new_mean <- mean(bydate$total.steps)
+new_median <- median(bydate$total.steps)
+```
+
+**The new mean value with NAs filled**
+
+```{r echo = TRUE}
+new_mean
+```
+
+**The new median value with NAs filled**
+
+```{r echo = TRUE}
+new_median
+```
+
+###The findings after the NA filling###
+
+**Compare the mean/median value with the original dataset, we may find the values are different.**
+**The new dataset with NA filling, the mean is almost indentical to median**
+
+###Are there differences in activity patterns between weekdays and weekends?###
 
 
