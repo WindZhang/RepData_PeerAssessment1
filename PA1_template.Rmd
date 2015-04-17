@@ -5,19 +5,65 @@ date: "Wednesday, April 15, 2015"
 output: html_document
 ---
 
-**Loading and preprocessing the data**
+### Loading and preprocessing the data ###
 
 setwd to locate the activity.csv, using the read.csv with header to load the data.
 
 ```{r echo = TRUE}
+
 setwd("F:/Rprog/repdata-data-activity")
 activity <- read.csv("activity.csv", header = TRUE)
 
 ```
 
-**What is mean total number of steps taken per day?**
+### What is mean total number of steps taken per day? ###
+
+using the sumarize of dplyr to sum the total steps grouped by date
 
 ```{r echo = TRUE}
+
+library(dplyr)
+
+### Calculate the total number of steps taken per day
+bydate <- summarize(group_by(activity,date), sum(steps, na.rm = TRUE))
+names(bydate)[2] <- "total.steps"
+
+### plot the histogram
+hist(bydate$total.steps,
+     xlab = "Steps Per Day",
+     main = "Histogram of 'Steps Per Day'"
+     )
+### Calculate and report the mean and median of the total number of steps taken per day
+
+mean(bydate$total.steps)
+median(bydate$total.steps)
+
+```
+### What is the average daily activity pattern? ###
+
+```{r echo = TRUE}
+byinterval <- summarize(group_by(activity, interval), 
+                        mean(steps, na.rm = TRUE))
+names(byinterval)[2] <- "avgsteps"
+with(byinterval, plot(interval, avgsteps, 
+                      type = "l",
+                      ylab = "Average Steps Across All Days",
+                      xlab = "5 Minutes Interval")
+     )
+```
+
+**Contains the maximum number of steps?**  
+
+```{r echo = TRUE}
+byinterval[which(byinterval$avgsteps == max(byinterval$avgsteps)),]
+```
+
+### Input the missing values ###
+
+**Count how many NAs in the original dataset**
+
+```{r echo = TRUE}
+sum(is.na(activity$steps == TRUE))
 
 ```
 
