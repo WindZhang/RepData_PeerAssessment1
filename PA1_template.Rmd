@@ -160,7 +160,12 @@ results <- qplot(x = interval, y = means,
                  data = byinterval,
                  geom = "line",
                  facets = wkdays~. ,
-                 ylab = "Number of Steps")
+                 ylab = "Number of Steps"
+                 )
+
+```
+**See below for the difference**
+```{r echo = TRUE }
 results
 
 ```
