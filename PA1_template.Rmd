@@ -142,16 +142,18 @@ new_median
 ```{r echo = TRUE}
 
 weekend <- c("Saterday", "Sunday")
-wkdays_act <- mutate(new_act, wkdays = weekdays(as.Date(date)))
+wkdays_act <- mutate(new_act, wkdays = factor(weekdays(as.Date(date)),
+                                              levels = c("weekend", "weekday")))
 
 for (i in 1:obs){
-        if(wkdays_act$wkdays[i] %in% weekend){
-            wkdays_act$wkdays[i] <- "weekend"
+        if(weekdays(as.Date(wkdays_act$date[i])) %in% weekend){
+            wkdays_act$wkdays[i] <- factor("weekend")
                 
         }else{
-            wkdays_act$wkdays[i] <- "weekday"
+            wkdays_act$wkdays[i] <- factor("weekday")
         }
 }
+
 
 byinterval <- summarize(group_by(wkdays_act, interval, wkdays), 
                         mean(steps, na.rm = TRUE))
