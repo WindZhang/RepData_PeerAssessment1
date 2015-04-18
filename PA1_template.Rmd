@@ -1,7 +1,7 @@
 ---
 title: "R course Peer Assessment 1"
-date: "Wednesday, April 15, 2015"
 output: html_document
+date: "Wednesday, April 15, 2015"
 ---
 
 ### Loading and preprocessing the data ###
@@ -13,8 +13,14 @@ Sys.setlocale("LC_TIME", "C")
 library(dplyr)
 library(ggplot2)
 setwd("F:/Rprog/repdata-data-activity")
-activity <- read.csv("activity.csv", header = TRUE)
+file_url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 
+if (!file.exists("activity.zip")){
+        download.file(file_url, destfile = "activity.zip")
+       unzip("activity.zip")
+}
+
+activity <- read.csv("activity.csv", header = TRUE)
 ```
 
 ### What is mean total number of steps taken per day? ###

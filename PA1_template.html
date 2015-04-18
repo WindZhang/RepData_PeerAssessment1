@@ -75,6 +75,13 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 ##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>library(ggplot2)
 setwd(&quot;F:/Rprog/repdata-data-activity&quot;)
+file_url &lt;- &quot;https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip&quot;
+
+if (!file.exists(&quot;activity.zip&quot;)){
+        download.file(file_url, destfile = &quot;activity.zip&quot;)
+       unzip(&quot;activity.zip&quot;)
+}
+
 activity &lt;- read.csv(&quot;activity.csv&quot;, header = TRUE)</code></pre>
 </div>
 <div id="what-is-mean-total-number-of-steps-taken-per-day" class="section level3">
