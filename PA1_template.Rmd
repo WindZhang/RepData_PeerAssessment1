@@ -159,7 +159,8 @@ names(byinterval)[3] <- "means"
 results <- qplot(x = interval, y = means, 
                  data = byinterval,
                  geom = "line",
-                 facets = wkdays~. )
+                 facets = wkdays~. ,
+                 ylab = "Number of Steps")
 results
 
 ```
